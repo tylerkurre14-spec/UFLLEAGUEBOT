@@ -1067,9 +1067,23 @@ server.listen(
   }
 );
 
-bot.login(DISCORD_TOKEN).catch(error => {
-  console.error(
-    "DISCORD LOGIN FAILED:",
-    error
-  );
-});
+console.log("STARTING DISCORD LOGIN");
+
+console.log("Token exists:", Boolean(DISCORD_TOKEN));
+
+const loginTimeout = setTimeout(() => {
+  if (!bot.isReady()) {
+    console.error("DISCORD LOGIN TIMEOUT: Bot not ready after 30 seconds");
+  }
+}, 30000);
+
+bot.login(DISCORD_TOKEN)
+  .then(() => {
+    console.log("DISCORD LOGIN REQUEST COMPLETED");
+  })
+  .catch(error => {
+    console.error("DISCORD LOGIN FAILED:", error);
+  })
+  .finally(() => {
+    clearTimeout(loginTimeout);
+  });
